@@ -27,11 +27,11 @@ def deploy():
 
 
 
-'''
+
 def main():
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-'''
+
 
 api.add_resource(UserRegister, '/register', methods=['POST'])
 api.add_resource(UserLogin, '/login', methods=['POST'])
@@ -39,5 +39,5 @@ api.add_resource(User, '/user/<string:user>', methods=['GET'])
 
 
 if __name__ == "__main__":
-    #main()
-    app.run(debug=True)
+    main()
+    #app.run(debug=True)
