@@ -1,11 +1,13 @@
 aniso8601==9.0.1
 appdirs==1.4.3
 astroid==2.3.3
+certifi==2021.10.8
 cffi==1.15.0
 click==8.0.4
 colorama==0.4.3
 cryptography==36.0.2
 distlib==0.3.1
+dnspython==2.2.1
 filelock==3.0.12
 Flask==2.0.3
 Flask-Cors==1.10.3
