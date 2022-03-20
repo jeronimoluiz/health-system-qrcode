@@ -1,13 +1,12 @@
 import os
-from flask import Flask
-from flask_restful import Resource, Api
 from flask_cors import CORS
-
-
-import pymongo
+from Resources.user import User, UserRegister, UserLogin
+from flask import Flask, jsonify, g, request
+from flask_restful import Resource, Api
 from connection import connect_mongodb
-from blacklist import BLACKLIST
-from Resources.user import User, UserRegister, UserLogin, UserLogout
+from datetime import datetime
+import time
+import json
 
 
 
@@ -34,9 +33,9 @@ def main():
     app.run(host="0.0.0.0", port=port)
 '''
 
-api.add_resource(UserRegister, '/register')
-api.add_resource(UserLogin, '/login')
-api.add_resource(UserLogout, '/logout')
+api.add_resource(UserRegister, '/register', methods=['POST'])
+api.add_resource(UserLogin, '/login', methods=['POST'])
+api.add_resource(User, '/user/<string:user>', methods=['GET'])
 
 
 if __name__ == "__main__":
