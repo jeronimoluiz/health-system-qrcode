@@ -1,0 +1,4 @@
+#Mon Feb 28 11:43:38 BRT 2022
+base.0=C\:\\Users\\jeron\\Documents\\health-system-qrcode\\Frontend\\teste\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
