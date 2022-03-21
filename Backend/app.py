@@ -1,6 +1,7 @@
 import os
 from flask_cors import CORS
 from Resources.user import User, UserRegister, UserLogin
+from Resources.patient import EmergencyInfoRegister, EmergencyInfo
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
 from connection import connect_mongodb
@@ -35,7 +36,11 @@ def main():
 
 api.add_resource(UserRegister, '/register', methods=['POST'])
 api.add_resource(UserLogin, '/login', methods=['POST'])
+
 api.add_resource(User, '/user/<string:user>', methods=['GET'])
+
+api.add_resource(EmergencyInfoRegister, '/emergency-info-register', methods=['POST'])
+api.add_resource(EmergencyInfo, '/emergency-info/<string:user>', methods=['GET'])
 
 
 if __name__ == "__main__":
