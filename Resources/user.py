@@ -13,13 +13,14 @@ import jwt
 atributos = reqparse.RequestParser()
 atributos.add_argument('user', type=str, required=True, help="O campo usuário não pode estar em branco.")
 atributos.add_argument('pw', type=str, required=True, help="O campo senha não pode estar em branco.")
-        
+atributos.add_argument('userType', type=str, required=False)
+
 
 class User(Resource):  
     # /user/{user}
     @token_required
     def get(self, data, user):
-        
+        print(data)
         user = UserModel.find_user(user)
         
         if user:
@@ -59,6 +60,25 @@ class UserLogin(Resource):
 
             return {'access_token': token}, 200
         return {'message':'Usuário ou senha inválido.'}, 401
+
+
+class UserUpdate(Resource):
+    @classmethod
+    @token_required
+    def post(cls, data):
+
+        dados = atributos.parse_args()
+        
+
+
+        if dados['user'] == cls.get("encode").get("user"):
+            
+
+            user = UserModel.update_user(cls.get("encode").get("user"), dados)
+
+            return {'message': "Atualização realizada com sucesso!"}, 200
+        
+        return {'message':'Não foi possível realizar a atualização.'}, 401
 
 '''
 class UserDelete(Resource):  
