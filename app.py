@@ -35,7 +35,14 @@ def main():
 
 api.add_resource(UserRegister, '/register', methods=['POST'])
 api.add_resource(UserLogin, '/login', methods=['POST'])
+api.add_resource(UserUpdate, '/user-update', methods=['POST'])
+
 api.add_resource(User, '/user/<string:user>', methods=['GET'])
+
+api.add_resource(EmergencyInfoRegister, '/emergency-info-register', methods=['POST'])
+api.add_resource(EmergencyInfo, '/emergency-info/<string:user>', methods=['GET'])
+api.add_resource(MakeEmergencyInfoQRCode, '/emergency-info-qrcode/<string:user>', methods=['GET'])
+api.add_resource(ReadEmergencyInfoQRCode, '/emergency-info-qrcode-read/<string:hash>', methods=['GET'])
 
 
 if __name__ == "__main__":
