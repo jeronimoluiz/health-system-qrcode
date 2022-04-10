@@ -38,6 +38,13 @@ class UserModel:
             #print("Usuário não encontrado")
             return None
 
+    @classmethod
+    def update_user(cls, user, data):
+        update_status = db.users.update_one({"user": user}, {"$set":data})
+        print("DADOS NOVOS: ", data)
+    
+        print("UPDATE: ", update_status)
+
     
     def save_user(self):
         
