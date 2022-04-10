@@ -1,6 +1,7 @@
 import os
 from flask_cors import CORS
-from Resources.user import User, UserRegister, UserLogin
+from Resources.user import User, UserRegister, UserLogin, UserUpdate
+from Resources.patient import EmergencyInfoRegister, EmergencyInfo, MakeEmergencyInfoQRCode, ReadEmergencyInfoQRCode
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
 from connection import connect_mongodb
