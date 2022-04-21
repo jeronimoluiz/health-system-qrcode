@@ -39,7 +39,7 @@ class UserRegister(Resource):
         if UserModel.find_by_login(dados['user']):
             return {"message": "O usuário '{}' já existe.".format(dados['user'])}
         print("Novo Usuário: ", dados)
-        user = UserModel(dados['user'], dados['pw'])
+        user = UserModel(dados['user'], dados['pw'], dados['userType'])
         new_user = user.save_user()
         
         return {"messege": "O usuário '{}' foi cadastrado com sucesso!".format(new_user["user"])}, 201
