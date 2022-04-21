@@ -3,6 +3,7 @@ import secrets
 from connection import connect_mongodb
 
 
+
 db = connect_mongodb()
 
 class UserModel:
