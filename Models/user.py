@@ -6,10 +6,11 @@ from connection import connect_mongodb
 db = connect_mongodb()
 
 class UserModel:
-    def __init__(self, user_id, pw):
+    def __init__(self, user_id, pw, userType='pacient'):
         
         self.user = user_id
         self.pw = pw
+        self.userType = userType
 
 
     @classmethod
@@ -50,10 +51,10 @@ class UserModel:
         
         #print("Counteúdo de self: ", self)
 
-        new_user = db.users.insert_one({"user":self.user, "pwhash":sha256(self.pw.encode('utf-8')).hexdigest()})
+        new_user = db.users.insert_one({"user":self.user, "userType":self.userType, "pwhash":sha256(self.pw.encode('utf-8')).hexdigest()})
         #print("Novo usuário: ", new_user)
         if new_user:
-            return {"user":self.user}
+            return {"user":self.user, "userType":self.userType}
         else:
             #print("Não foi possível criar usuário.")
             return {"message":"Não foi possível criar usuário"}
