@@ -26,6 +26,7 @@ def token_required(f):
             return {'message' : 'Token ausente!'}, 401
   
         try:
+            data = jwt.decode(token, public_key, algorithms=['RS256'])
         except Exception as e:
             #print("ERRO: ", e)
             return {'message' : 'Token inválido!'}, 401

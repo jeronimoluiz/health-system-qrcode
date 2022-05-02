@@ -6,12 +6,17 @@ from base64 import b64decode
 from hashlib import sha256
 import json
 import jwt
+import hashlib
+import qrcode
+from io import BytesIO
+import base64
 
 
 
 
 atributos = reqparse.RequestParser()
 atributos.add_argument('user', type=str, required=True, help="O campo usuário não pode estar em branco.")
+atributos.add_argument('username', type=str, required=False, help="O campo username não pode estar em branco.")
 atributos.add_argument('pw', type=str, required=True, help="O campo senha não pode estar em branco.")
 atributos.add_argument('userType', type=str, required=False)
 
@@ -39,7 +44,18 @@ class UserRegister(Resource):
         if UserModel.find_by_login(dados['user']):
             return {"message": "O usuário '{}' já existe.".format(dados['user'])}
         print("Novo Usuário: ", dados)
-        user = UserModel(dados['user'], dados['pw'])
+
+        hashText = hashlib.md5(str(dados['user']).encode("utf-8")).hexdigest()
+        print("HASH: ", hashText)
+
+        imagem = qrcode.make(hashText)
+
+        buffer = BytesIO()
+        imagem.save(buffer, format = "PNG")
+
+        img_str = str(base64.b64encode(buffer.getvalue()), 'utf-8')
+
+        user = UserModel(dados['user'], dados['pw'], dados['username'], img_str, hashText, dados['userType'])
         new_user = user.save_user()
         
         return {"messege": "O usuário '{}' foi cadastrado com sucesso!".format(new_user["user"])}, 201

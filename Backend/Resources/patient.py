@@ -108,9 +108,13 @@ class ReadEmergencyInfoQRCode(Resource):
 
         permission_doctor = False
         permission_rescuer = False
-        for doctor in pacient_user["medicalTeam"]:
-            if doctor == token_user["user"]:
-                permission_doctor = True
+
+        if pacient_user.get("medicalTeam") != None:
+            for doctor in pacient_user["medicalTeam"]:
+                if doctor == token_user["user"]:
+                    permission_doctor = True
+        elif pacient_user.get("medicalTeam") == None:
+            permission_doctor = True
 
         if token_user["userType"] == "rescuer":
             permission_rescuer = True

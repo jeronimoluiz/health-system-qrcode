@@ -2,6 +2,9 @@ import os
 from flask_cors import CORS
 from Resources.user import User, UserRegister, UserLogin, UserUpdate
 from Resources.patient import EmergencyInfoRegister, EmergencyInfo, MakeEmergencyInfoQRCode, ReadEmergencyInfoQRCode
+from Resources.medicine import Medicine, MedicineRegister, MedicineQRCode
+from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode
+from Resources.flow import Flow, FlowQuery
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
 from connection import connect_mongodb
@@ -46,6 +49,21 @@ api.add_resource(MakeEmergencyInfoQRCode, '/emergency-info-qrcode/<string:user>'
 api.add_resource(ReadEmergencyInfoQRCode, '/emergency-info-qrcode-read/<string:hash>', methods=['GET'])
 
 
+api.add_resource(MedicineRegister, '/medicine-register', methods=['POST'])
+api.add_resource(Medicine, '/medicine/<string:medicine_id>', methods=['GET'])
+api.add_resource(MedicineQRCode, '/medicine-qrcode/<string:medicine_id>', methods=['GET'])
+
+
+api.add_resource(PrescriptionRegister, '/prescription-register', methods=['POST'])
+api.add_resource(PrescriptionUser, '/prescription/<string:user>', methods=['GET'])
+api.add_resource(Prescription, '/prescription/<string:user>/<string:medicine_id>', methods=['GET'])
+api.add_resource(PrescriptionQRCode, '/prescription-qrcode/<string:user>/<string:medicine_id>', methods=['GET'])
+
+
+api.add_resource(FlowQuery, '/flow-query/<string:QRcode_patient>/<string:QRcode_employee>/<string:QRcode_medicine>', methods=['GET'])
+api.add_resource(Flow, '/flow', methods=['POST'])
+
+
 if __name__ == "__main__":
-    main()
-    #app.run(debug=True)
+    #main()
+    app.run(debug=True)
