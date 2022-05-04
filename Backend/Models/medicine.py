@@ -7,7 +7,7 @@ db = connect_mongodb()
 
 
 class MedicineModel:
-    def __init__(self, medicine_id, medicine_name, manufacturer, expiration, inventory, qr_code_base64, hashText):
+    def __init__(self, medicine_id, medicine_name = None, manufacturer = None, expiration = None, inventory = None, qr_code_base64 = None, hashText = None):
         
         self.medicineID = medicine_id
         self.medicineName = medicine_name
@@ -34,6 +34,32 @@ class MedicineModel:
             return None
 
     @classmethod
+    def list_medicine(cls):
+        
+        medicine_found = db.medicine.find({})
+        med_list = []
+
+        for med in medicine_found:
+            med.pop("_id")
+            med_list.append(med)
+            
+        return med_list
+
+    @classmethod
+    def list_medicine_name(cls):
+        
+        medicine_found = db.medicine.find({})
+        med_list = []
+
+        for med in medicine_found:
+            aux = {}
+            aux_id = med.pop("medicineID")
+            aux_name = med.pop("medicineName")
+            med_list.append({"medicineID": aux_id, "medicineName": aux_name})
+            
+        return med_list
+
+    @classmethod
     def find_medicine_qrcode(cls, hash):
         
         medicine_found = db.medicine.find_one({"hashText": hash})
@@ -56,3 +82,26 @@ class MedicineModel:
             return {"messege": "O novo medicamento foi cadastrado com sucesso!"}, 200
         else:
             return {"message": "Não foi possível cadastrar o medicamento."}, 400
+
+    def update_medicine(self):
+
+        new_medicine = None
+
+        if self.medicineName:
+            print("Aqui 1: ", self.medicineName)
+            new_medicine = db.medicine.update_one({"medicineID": self.medicineID}, {"$set": {"medicineName": self.medicineName}})
+        if self.manufacturer:
+            print("Aqui 2")
+            new_medicine = db.medicine.update_one({"medicineID": self.medicineID}, {"$set": {"manufacturer": self.manufacturer}})
+        if self.inventory:
+            print("Aqui 3")
+            new_medicine = db.medicine.update_one({"medicineID": self.medicineID}, {"$set": {"inventory": self.inventory}})
+        if self.expiration:
+            print("Aqui 4")
+            new_medicine = db.medicine.update_one({"medicineID": self.medicineID}, {"$set": {"expiration": self.expiration}})
+        
+
+        if new_medicine:
+            return {"messege": "O medicamento foi atualizado com sucesso!"}, 200
+        else:
+            return {"message": "Não foi possível atualizar o medicamento."}, 400

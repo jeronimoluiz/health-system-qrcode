@@ -2,8 +2,8 @@ import os
 from flask_cors import CORS
 from Resources.user import User, UserRegister, UserLogin, UserUpdate
 from Resources.patient import EmergencyInfoRegister, EmergencyInfo, MakeEmergencyInfoQRCode, ReadEmergencyInfoQRCode
-from Resources.medicine import Medicine, MedicineRegister, MedicineQRCode
-from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode
+from Resources.medicine import Medicine, MedicineRegister, MedicineQRCode, MedicineList, MedicineListName, MedicineUpdate
+from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode, PrescriptionUpdate
 from Resources.flow import Flow, FlowQuery
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
@@ -50,11 +50,15 @@ api.add_resource(ReadEmergencyInfoQRCode, '/emergency-info-qrcode-read/<string:h
 
 
 api.add_resource(MedicineRegister, '/medicine-register', methods=['POST'])
+api.add_resource(MedicineUpdate, '/medicine-update', methods=['POST'])
 api.add_resource(Medicine, '/medicine/<string:medicine_id>', methods=['GET'])
 api.add_resource(MedicineQRCode, '/medicine-qrcode/<string:medicine_id>', methods=['GET'])
+api.add_resource(MedicineList, '/medicine-list', methods=['GET'])
+api.add_resource(MedicineListName, '/medicine-list-name', methods=['GET'])
 
 
 api.add_resource(PrescriptionRegister, '/prescription-register', methods=['POST'])
+api.add_resource(PrescriptionUpdate, '/prescription-update', methods=['POST'])
 api.add_resource(PrescriptionUser, '/prescription/<string:user>', methods=['GET'])
 api.add_resource(Prescription, '/prescription/<string:user>/<string:medicine_id>', methods=['GET'])
 api.add_resource(PrescriptionQRCode, '/prescription-qrcode/<string:user>/<string:medicine_id>', methods=['GET'])

@@ -11,9 +11,9 @@ import pytz
 
 
 atributos = reqparse.RequestParser()
-atributos.add_argument('patient_id', type=str, required=True, help="O campo patient_id não pode estar em branco.")
-atributos.add_argument('medicine_id', type=str, required=True, help="O campo medicine_id não pode estar em branco.")
-atributos.add_argument('application_time', type=str, required=True, help="O campo application_time não pode estar em branco.")
+atributos.add_argument('patient_id', type=str, required=False, help="O campo patient_id não pode estar em branco.")
+atributos.add_argument('medicine_id', type=str, required=False, help="O campo medicine_id não pode estar em branco.")
+atributos.add_argument('application_time', type=str, required=False, help="O campo application_time não pode estar em branco.")
 
 
 
@@ -39,9 +39,12 @@ class PrescriptionRegister(Resource):
             return {"message": "O medicamento já foi prescrito para este paciente."}, 400
         print("Nova prescrição: ", dados)
 
+
         
 
-        print("HASH: ", hashText)
+        prescription_time = str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d'))
+
+        hashText = hashlib.md5(str(dados['patient_id'] + dados['medicine_id'] + str(prescription_time)).encode("utf-8")).hexdigest()
 
         imagem = qrcode.make(hashText)
 
@@ -50,13 +53,31 @@ class PrescriptionRegister(Resource):
 
         img_str = str(base64.b64encode(buffer.getvalue()), 'utf-8')
 
-        prescription_time = str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d'))
-
-        hashText = hashlib.md5(str(dados['patient_id'] + dados['medicine_id'] + str(prescription_time)).encode("utf-8")).hexdigest()
-
-
         prescription = PrescriptionModel(dados['patient_id'], doctor, dados['medicine_id'], dados['application_time'], prescription_time, img_str, hashText)
         new_prescription = prescription.save_prescription()
+        
+        
+        return new_prescription
+
+
+class PrescriptionUpdate(Resource):
+    # /prescription-update
+    @token_required
+    def post(self, data):
+        
+        dados = atributos.parse_args()
+        print(dados)
+
+        token_user = UserModel.find_by_login(self.get("encode").get("user"))
+
+        if token_user.get("userType") == "doctor":
+            doctor = token_user.get("user")
+        else:
+            return {"message": "O usuário não possui permissão para atualizar a prescrição médica."}, 400
+
+ 
+        prescription = PrescriptionModel(dados.get('patient_id'), doctor, dados.get('medicine_id'), dados.get('application_time'))
+        new_prescription = prescription.update_prescription()
         
         
         return new_prescription

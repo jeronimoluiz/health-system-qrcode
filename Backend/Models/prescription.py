@@ -7,7 +7,7 @@ db = connect_mongodb()
 
 
 class PrescriptionModel:
-    def __init__(self, patient_id, doctor, medicine_id, application_time, prescriptionHashText, qr_code_base64, hashText):
+    def __init__(self, patient_id, doctor, medicine_id, application_time = None, prescriptionHashText = None, qr_code_base64 = None, hashText = None):
         
         self.user = patient_id
         self.doctor = doctor
@@ -74,3 +74,18 @@ class PrescriptionModel:
             return {"messege": "A nova prescrição foi cadastrada com sucesso!"}, 200
         else:
             return {"message": "Não foi possível cadastrar a prescrição."}, 400
+
+    
+    def update_prescription(self):
+
+        new_prescription = None
+
+        if self.aplicationTime:
+            print("Aqui 1: ", self.aplicationTime)
+            new_prescription = db.prescription.update_one({"patientID": self.user, "medicineID": self.medicineID}, {"$set": {"aplicationTime": self.aplicationTime}})
+        
+
+        if new_prescription:
+            return {"messege": "A prescrição foi atualizada com sucesso!"}, 200
+        else:
+            return {"message": "Não foi possível atualizar a prescrição."}, 400
