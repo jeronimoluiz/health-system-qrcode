@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'emercengyInfoRegister.view.dart';
 import 'package:healthcare_system_qrcode/controller/emercgencyIngoRegisterController.dart';
 import 'qrExibition.view.dart';
+import 'package:healthcare_system_qrcode/views/medicineRegister.view.dart';
 
 class HomeRoute extends StatelessWidget {
 const HomeRoute({Key? key}) : super(key: key);
 
   _onClickEmergencyInfoRegister(BuildContext context) {
-
     load().then((value) {
       if (value == true) {
         Navigator.push(
@@ -66,6 +66,13 @@ const HomeRoute({Key? key}) : super(key: key);
     });    
   }
 
+  _onClickRegisterMedicine(BuildContext context) {    
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => MedicineRegisterRoute()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +100,17 @@ const HomeRoute({Key? key}) : super(key: key);
                   child: const Text('Exibir QR Code de emergencia'),
                   onPressed: () {
                     _onClickGenarateQR(context);
+                  },
+                )
+            ),
+             SizedBox(height: 20),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+                child: ElevatedButton(
+                  child: const Text('Cadastrar Medicamento'),
+                  onPressed: () {
+                    _onClickRegisterMedicine(context);
                   },
                 )
             ),

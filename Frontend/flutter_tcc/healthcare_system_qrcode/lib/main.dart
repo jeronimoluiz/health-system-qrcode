@@ -10,6 +10,7 @@ import 'views/home.view.dart';
 import 'qrcode.dart' as scanner; 
 import 'package:healthcare_system_qrcode/globals.dart' as globals;
 import 'package:healthcare_system_qrcode/views/emergencyInfo.view.dart';
+import 'package:healthcare_system_qrcode/views/medicineRegister.view.dart';
 
 void main() {
   runApp(const MyApp());
