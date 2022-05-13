@@ -3,7 +3,7 @@ from flask_cors import CORS
 from Resources.user import User, UserRegister, UserLogin, UserUpdate
 from Resources.patient import EmergencyInfoRegister, EmergencyInfo, MakeEmergencyInfoQRCode, ReadEmergencyInfoQRCode
 from Resources.medicine import Medicine, MedicineRegister, MedicineQRCode, MedicineList, MedicineListName, MedicineUpdate
-from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode, PrescriptionUpdate
+from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode, PrescriptionUpdate, PrescriptionPDF
 from Resources.flow import Flow, FlowQuery
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
@@ -62,6 +62,7 @@ api.add_resource(PrescriptionUpdate, '/prescription-update', methods=['POST'])
 api.add_resource(PrescriptionUser, '/prescription/<string:user>', methods=['GET'])
 api.add_resource(Prescription, '/prescription/<string:user>/<string:medicine_id>', methods=['GET'])
 api.add_resource(PrescriptionQRCode, '/prescription-qrcode/<string:user>/<string:medicine_id>', methods=['GET'])
+api.add_resource(PrescriptionPDF, '/prescription-pdf/<string:user>/<string:medicine_id>', methods=['GET'])
 
 
 api.add_resource(FlowQuery, '/flow-query/<string:QRcode_patient>/<string:QRcode_employee>/<string:QRcode_medicine>', methods=['GET'])

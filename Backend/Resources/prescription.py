@@ -14,6 +14,7 @@ atributos = reqparse.RequestParser()
 atributos.add_argument('patient_id', type=str, required=False, help="O campo patient_id não pode estar em branco.")
 atributos.add_argument('medicine_id', type=str, required=False, help="O campo medicine_id não pode estar em branco.")
 atributos.add_argument('application_time', type=str, required=False, help="O campo application_time não pode estar em branco.")
+atributos.add_argument('description', type=str, required=False, help="O campo description não pode estar em branco.")
 
 
 
@@ -29,8 +30,8 @@ class PrescriptionRegister(Resource):
 
         token_user = UserModel.find_by_login(self.get("encode").get("user"))
 
-        if token_user["userType"] == "doctor":
-            doctor = token_user["user"]
+        if token_user.get("userType") == "doctor":
+            doctor = token_user.get("user")
         else:
             return {"message": "O usuário não possui permissão para prescrever medicamentos."}, 400
 
@@ -44,7 +45,7 @@ class PrescriptionRegister(Resource):
 
         prescription_time = str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d'))
 
-        hashText = hashlib.md5(str(dados['patient_id'] + dados['medicine_id'] + str(prescription_time)).encode("utf-8")).hexdigest()
+        hashText = hashlib.md5(str(dados.get('patient_id') + dados.get('medicine_id') + str(prescription_time)).encode("utf-8")).hexdigest()
 
         imagem = qrcode.make(hashText)
 
@@ -53,7 +54,7 @@ class PrescriptionRegister(Resource):
 
         img_str = str(base64.b64encode(buffer.getvalue()), 'utf-8')
 
-        prescription = PrescriptionModel(dados['patient_id'], doctor, dados['medicine_id'], dados['application_time'], prescription_time, img_str, hashText)
+        prescription = PrescriptionModel(dados.get('patient_id'), doctor, dados.get('medicine_id'), dados.get('description'), dados.get('application_time'), prescription_time, img_str, hashText)
         new_prescription = prescription.save_prescription()
         
         
@@ -129,6 +130,31 @@ class Prescription(Resource):
         if prescription:
 
             return prescription, 200
+        
+        return {"message": "Não foi encontrado nenhuma prescrição para este paciente."}, 400
+
+class PrescriptionPDF(Resource):
+    # /prescription-pdf/{user}/{medicine_id}
+    @token_required
+    def get(self, data, user, medicine_id):
+        print("DATA: ", self)
+        print("Usuário ID: ", user)
+        print(self.get("encode").get("user"))
+        user_found =  UserModel.find_by_login(self.get("encode").get("user"))
+        print(user_found)
+
+        prescription = None
+
+        if user_found["userType"] == "doctor" or user_found["user"] == user:
+
+            prescription = PrescriptionModel.find_prescription(user, medicine_id)
+           
+        
+        if prescription:
+
+            pdf = prescription.get("prescriptionPDF")
+
+            return {"prescriptionPDF": str(pdf)}, 200
         
         return {"message": "Não foi encontrado nenhuma prescrição para este paciente."}, 400
 

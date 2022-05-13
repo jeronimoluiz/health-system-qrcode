@@ -1,5 +1,6 @@
 from connection import connect_mongodb
 from flask import request
+from documents import fill_document
 
 
 db = connect_mongodb()
@@ -7,13 +8,14 @@ db = connect_mongodb()
 
 
 class PrescriptionModel:
-    def __init__(self, patient_id, doctor, medicine_id, application_time = None, prescriptionHashText = None, qr_code_base64 = None, hashText = None):
+    def __init__(self, patient_id, doctor, medicine_id, description = None, application_time = None, prescriptionDate = None, qr_code_base64 = None, hashText = None):
         
         self.user = patient_id
         self.doctor = doctor
         self.medicineID = medicine_id
+        self.description = description
         self.aplicationTime = application_time
-        self.prescriptionHashText = prescriptionHashText
+        self.prescriptionDate = prescriptionDate
         self.QRCode = qr_code_base64
         self.hashText = hashText
 
@@ -68,7 +70,11 @@ class PrescriptionModel:
 
     def save_prescription(self):
 
-        new_prescription = db.prescription.insert_one({"patientID": self.user, "doctor": self.doctor, "medicineID": self.medicineID, "aplicationTime": self.aplicationTime, "prescriptionHashText": self.prescriptionHashText, "QRCode": self.QRCode, "hashText": self.hashText})
+        json_prescription = {"patientID": self.user, "doctor": self.doctor, "medicineID": self.medicineID, "aplicationTime": self.aplicationTime, "description": self.description, "prescriptionDate": self.prescriptionDate, "QRCode": self.QRCode, "hashText": self.hashText}
+
+        prescription_pdf = fill_document(json_prescription)
+
+        new_prescription = db.prescription.insert_one({"patientID": self.user, "doctor": self.doctor, "medicineID": self.medicineID, "aplicationTime": self.aplicationTime, "description": self.description, "prescriptionDate": self.prescriptionDate, "QRCode": self.QRCode, "hashText": self.hashText, "prescriptionPDF": prescription_pdf})
         #print("Nova informação: ", new_prescription)
         if new_prescription:
             return {"messege": "A nova prescrição foi cadastrada com sucesso!"}, 200
@@ -83,6 +89,9 @@ class PrescriptionModel:
         if self.aplicationTime:
             print("Aqui 1: ", self.aplicationTime)
             new_prescription = db.prescription.update_one({"patientID": self.user, "medicineID": self.medicineID}, {"$set": {"aplicationTime": self.aplicationTime}})
+        if self.description:
+            print("Aqui 2: ", self.description)
+            new_prescription = db.prescription.update_one({"patientID": self.user, "medicineID": self.medicineID}, {"$set": {"description": self.description}})
         
 
         if new_prescription:
