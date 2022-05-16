@@ -8,7 +8,7 @@ db = connect_mongodb()
 
 
 class PrescriptionModel:
-    def __init__(self, patient_id, doctor, medicine_id, description = None, application_time = None, prescriptionDate = None, qr_code_base64 = None, hashText = None):
+    def __init__(self, patient_id, doctor, medicine_id, description = None, application_time = None, prescriptionDate = None, qr_code_base64 = None, hashText = None, lastAplicationTime = None):
         
         self.user = patient_id
         self.doctor = doctor
@@ -18,6 +18,7 @@ class PrescriptionModel:
         self.prescriptionDate = prescriptionDate
         self.QRCode = qr_code_base64
         self.hashText = hashText
+        self.lastAplicationTime = lastAplicationTime
 
 
         
@@ -27,7 +28,15 @@ class PrescriptionModel:
         prescription_vector = []
 
         if medicine_id != None:
-            prescription_found = db.prescription.find_one({"patientID": patient_id, "medicineID": medicine_id})
+            prescription_found = db.prescription.find({"patientID": patient_id, "medicineID": medicine_id})
+
+            for presc in prescription_found:
+                presc.pop("_id")
+                #presc.pop("QRCode")
+                #presc.pop("hashText")
+
+                prescription_vector.append(presc)
+
         else:
             prescription_found = db.prescription.find({"patientID": patient_id})
 
@@ -40,17 +49,12 @@ class PrescriptionModel:
         
 
         if prescription_found:
-            if len(prescription_vector) > 0:
+            if len(prescription_vector) > 0 and  medicine_id == None:
 
                 return {"prescription": prescription_vector}
             else:
-                prescription_found.pop("_id")
-                #prescription_found.pop("QRCode")
-                #prescription_found.pop("hashText")
-                
-                return prescription_found
+                return prescription_vector
         else:
-            #print("Usuário não encontrado")
             return None
 
     @classmethod
@@ -74,7 +78,7 @@ class PrescriptionModel:
 
         prescription_pdf = fill_document(json_prescription)
 
-        new_prescription = db.prescription.insert_one({"patientID": self.user, "doctor": self.doctor, "medicineID": self.medicineID, "aplicationTime": self.aplicationTime, "description": self.description, "prescriptionDate": self.prescriptionDate, "QRCode": self.QRCode, "hashText": self.hashText, "prescriptionPDF": prescription_pdf})
+        new_prescription = db.prescription.insert_one({"patientID": self.user, "doctor": self.doctor, "medicineID": self.medicineID, "aplicationTime": self.aplicationTime, "description": self.description, "prescriptionDate": self.prescriptionDate, "QRCode": self.QRCode, "hashText": self.hashText, "prescriptionPDF": prescription_pdf, "lastAplicationTime": self.lastAplicationTime})
         #print("Nova informação: ", new_prescription)
         if new_prescription:
             return {"messege": "A nova prescrição foi cadastrada com sucesso!"}, 200
@@ -92,6 +96,9 @@ class PrescriptionModel:
         if self.description:
             print("Aqui 2: ", self.description)
             new_prescription = db.prescription.update_one({"patientID": self.user, "medicineID": self.medicineID}, {"$set": {"description": self.description}})
+        if self.lastAplicationTime:
+            print("Aqui 3: ", self.lastAplicationTime)
+            new_prescription = db.prescription.update_one({"patientID": self.user, "medicineID": self.medicineID}, {"$set": {"lastAplicationTime": self.lastAplicationTime}})
         
 
         if new_prescription:

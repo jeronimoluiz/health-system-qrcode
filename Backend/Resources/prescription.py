@@ -36,8 +36,19 @@ class PrescriptionRegister(Resource):
             return {"message": "O usuário não possui permissão para prescrever medicamentos."}, 400
 
 
-        if PrescriptionModel.find_prescription(dados['patient_id'], dados['medicine_id']):
-            return {"message": "O medicamento já foi prescrito para este paciente."}, 400
+        prescription_found = PrescriptionModel.find_prescription(dados['patient_id'], dados['medicine_id'])
+
+        if prescription_found:
+            
+            final_day = datetime.strptime(str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d')), '%Y-%m-%d')
+            for presc in prescription_found:
+                initial_day = datetime.strptime(presc.get("prescriptionDate"), '%Y-%m-%d')
+                
+                quantidade_dias = abs((final_day - initial_day).days)
+                print("Quantidade de dias: ", quantidade_dias)
+
+                if quantidade_dias <= 10:
+                    return {"message": "O medicamento já foi prescrito para este paciente nos últimos 10 dias."}, 400
         print("Nova prescrição: ", dados)
 
 

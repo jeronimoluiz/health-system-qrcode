@@ -5,6 +5,7 @@ from Resources.patient import EmergencyInfoRegister, EmergencyInfo, MakeEmergenc
 from Resources.medicine import Medicine, MedicineRegister, MedicineQRCode, MedicineList, MedicineListName, MedicineUpdate
 from Resources.prescription import PrescriptionRegister, PrescriptionUser, Prescription, PrescriptionQRCode, PrescriptionUpdate, PrescriptionPDF
 from Resources.flow import Flow, FlowQuery
+from Resources.validation import ValidationQuery
 from flask import Flask, jsonify, g, request
 from flask_restful import Resource, Api
 from connection import connect_mongodb
@@ -67,6 +68,8 @@ api.add_resource(PrescriptionPDF, '/prescription-pdf/<string:user>/<string:medic
 
 api.add_resource(FlowQuery, '/flow-query/<string:QRcode_patient>/<string:QRcode_employee>/<string:QRcode_medicine>', methods=['GET'])
 api.add_resource(Flow, '/flow', methods=['POST'])
+
+api.add_resource(ValidationQuery, '/validation-document/<string:validation_code>', methods=['GET'])
 
 
 if __name__ == "__main__":

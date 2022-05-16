@@ -62,8 +62,8 @@ class Flow(Resource):
         elif patient_medicine == None:
             return {"message": "Não foi possível encontrar o medicamento."}, 400
         
-
         
+
         #print("Paciente: ", patient_qrcode.get("username"))
         #print("Funcionario: ", patient_employee.get("username"))
         #print("Medicamento: ", patient_medicine.get("medicineName"))
@@ -87,9 +87,33 @@ class Flow(Resource):
         prescription = PrescriptionModel.find_prescription(patient_qrcode.get("user"), patient_medicine.get("medicineID"))
         
         if prescription:
-            procedure = ProcedureModel(patient_qrcode.get("user"), patient_employee.get("user"), time, prescription.get("hashText"), img_str, hashText)
+            presc = prescription[len(prescription)-1]
+            
+            final_day = datetime.strptime(str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y-%m-%d')), '%Y-%m-%d')
+            initial_day = datetime.strptime(presc.get("prescriptionDate"), '%Y-%m-%d')
+            
+            quantidade_dias = abs((final_day - initial_day).days)
+            print("Quantidade de dias prescrição Flow: ", quantidade_dias)
+
+            if quantidade_dias > 30:
+                return {"message": "Não foi possível realizar o procedimento. A prescrição da medicação para este paciente passou de 30 dias."}, 400
+            if presc.get("lastAplicationTime"):
+                dif = abs((datetime.strptime(str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y/%m/%d %H:%M:%S')), '%Y/%m/%d %H:%M:%S') - datetime.strptime(presc.get("lastAplicationTime"), '%Y/%m/%d %H:%M:%S')).total_seconds())
+                horas = float(dif/3600)
+                if horas < float(presc.get("aplicationTime")):
+                    return {"message": "A aplicação não pode ser aplicada. Se passaram apenas {:.2f} horas desde a última aplicação do medicamento. A prescrição médica recomenda que seja aplicada de {} em {} horas".format(horas, presc.get("aplicationTime"), presc.get("aplicationTime"))}, 400
+            
+            procedure = ProcedureModel(patient_qrcode.get("user"), patient_employee.get("user"), time, presc.get("hashText"), img_str, hashText)
             new_procedure = procedure.save_procedure()
-        
+            prescription_update = PrescriptionModel(patient_qrcode.get("user"), patient_employee.get('user'), patient_medicine.get("medicineID"), lastAplicationTime= str(datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y/%m/%d %H:%M:%S')))
+            prescription_update.update_prescription()
+
+            if int(patient_medicine.get("inventory")) <= 0:
+                return {"message": "Não é possível realizar o procedimento, pois não há estoque do medicamento. Entre em contato com a farmácia."}, 400
+            else:
+                medicine = MedicineModel(patient_medicine.get("medicineID"), inventory= (int(patient_medicine.get("inventory")) - 1))
+                medicine.update_medicine()
+
             return new_procedure
         return {"message": "Não foi possível salvar procedimento."}, 400
 
