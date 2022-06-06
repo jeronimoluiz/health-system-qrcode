@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthcare_system_qrcode/globals.dart' as globals;
 import 'package:healthcare_system_qrcode/controller/emercgencyIngoRegisterController.dart';
 import 'dart:developer';
+import 'package:healthcare_system_qrcode/views/home.view.dart';
 
 class EmergencyRegisterRoute extends StatefulWidget {
   const EmergencyRegisterRoute({Key? key}) : super(key: key);
@@ -22,9 +23,40 @@ class _EmergencyRegisterRoute extends State<EmergencyRegisterRoute> {
 runMyRegister() {
     register(nameController.text, adressController.text,bloodTypeController.text,healthInfoController.text,organDonorController.text,emergencyContactController.text).then((value) {
       if (value == true) {
-        log('ok');
+          showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text("Tudo Certo"),
+              content: const Text("Dados de emergencia cadastrados com sucesso!"),
+              actions: <Widget>[
+                TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                       Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HomeRoute()),
+                              );
+                    })
+              ]);
+        },
+      );
       } else {
-        log('error');
+         showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text("Erro"),
+              content: const Text("Erro ao cadastrar as informações de emergencia, entre em contato com o suprte!"),
+              actions: <Widget>[
+                TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ]);
+        },
+      );
       }
     }, onError: (error) {
       return (error);
@@ -32,7 +64,23 @@ runMyRegister() {
   }
 
   _onClickRegister(BuildContext context) {
-    if (nameController.text.isEmpty || adressController.text.isEmpty || bloodTypeController.text.isEmpty || bloodTypeController.text.isEmpty || emergencyContactController.text.isEmpty ) {
+    if (globals.nome.isNotEmpty || globals.adress.isNotEmpty || globals.bloodType.isNotEmpty || globals.healthInfo.isNotEmpty || globals.emergencyContact.isNotEmpty ) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text("Erro"),
+              content: const Text("Dados de emergencia só podem ser cadastrado uma vez!"),
+              actions: <Widget>[
+                TextButton(
+                    child: const Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ]);
+        },
+      );
+    }  else if (nameController.text.isEmpty || adressController.text.isEmpty || healthInfoController.text.isEmpty || bloodTypeController.text.isEmpty || emergencyContactController.text.isEmpty ) {
       showDialog(
         context: context,
         builder: (context) {
@@ -60,6 +108,7 @@ runMyRegister() {
         title: const Text('Cadastro'),
       ),
       body: Center(
+        child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -184,6 +233,28 @@ runMyRegister() {
                 ),
               ),
             ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                autofocus: false,
+                controller: healthInfoController,
+                decoration: const InputDecoration(
+                  fillColor: Color.fromARGB(255, 159, 218, 231),
+                  filled: true,
+                  border: OutlineInputBorder(),
+                  labelText: 'Informações Adicionais',
+                  hintText:  'Entre com informações relevantes sobre o seu estado de saúde',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 0, color: Color.fromARGB(255, 255, 255, 255)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2, color: Color.fromARGB(255, 0, 184, 153)),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 30),
              Container(
                 height: 50,
@@ -201,6 +272,7 @@ runMyRegister() {
                   },
                 )),
           ],
+        ),
         ),
       ),
     );

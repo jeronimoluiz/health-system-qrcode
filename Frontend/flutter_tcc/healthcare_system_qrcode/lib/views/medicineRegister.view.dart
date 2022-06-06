@@ -3,6 +3,7 @@ import 'package:healthcare_system_qrcode/controller/medicineRegister.controller.
 import 'package:healthcare_system_qrcode/main.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'dart:developer';
+import 'package:healthcare_system_qrcode/views/home.view.dart';
 
 class MedicineRegisterRoute extends StatefulWidget {
   const MedicineRegisterRoute({Key? key}) : super(key: key);
@@ -31,7 +32,10 @@ class _MedicineRegisterRoute extends State<MedicineRegisterRoute> {
               TextButton(
                   child: const Text("OK"),
                   onPressed: () {
-                    Navigator.pop(context);
+                     Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomeRoute()),
+                            );
                   })
             ]);
       },
