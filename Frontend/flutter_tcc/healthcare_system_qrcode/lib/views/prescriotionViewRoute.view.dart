@@ -4,31 +4,31 @@ import 'package:healthcare_system_qrcode/controller/emercgencyIngoRegisterContro
 import 'dart:developer';
 import 'dart:convert';
 
-class qrExibitionRoute extends StatefulWidget {
-  const qrExibitionRoute({Key? key}) : super(key: key);
+class prescriptionViewRoute extends StatefulWidget {
+  const prescriptionViewRoute({Key? key}) : super(key: key);
 
 
   @override
-  _qrExibitionRoute createState() => _qrExibitionRoute();
+  _prescriptionViewRoute createState() => _prescriptionViewRoute();
 }
 
-class _qrExibitionRoute extends State<qrExibitionRoute> {
+class _prescriptionViewRoute extends State<prescriptionViewRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code'),
+        title: const Text('Minha prescrição'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
              Container(
-                height: 400.0,
-                width: 400.0,
+                height: 575.0,
+                //width: 400.0,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: MemoryImage(base64Decode(globals.QRb64)),
+                    image: MemoryImage(base64Decode(globals.actualPrescription)),
                     fit: BoxFit.fill,
                   ),
                   shape: BoxShape.rectangle,
@@ -39,4 +39,6 @@ class _qrExibitionRoute extends State<qrExibitionRoute> {
       ),
     );
   }
+
+
 }

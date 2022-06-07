@@ -37,6 +37,7 @@ dependencies:
   http: ^0.13.4
   mobile_scanner: ^1.0.0
   date_time_picker: ^2.1.0
+  
 
 dev_dependencies:
   flutter_test:

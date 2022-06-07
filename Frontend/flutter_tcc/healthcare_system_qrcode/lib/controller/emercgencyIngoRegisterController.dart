@@ -27,6 +27,14 @@ Future<bool> load() async{
         globals.healthInfo = body['healthInfo'];
         globals.organDonor = body['organDonor'];
         return true;
+      }else if(response.statusCode == 404){
+        globals.nome = '';
+        globals.adress = '';
+        globals.bloodType = '';
+        globals.emergencyContact = '';
+        globals.healthInfo = '';
+        globals.organDonor = '';
+        return true;
       }else{
         return false;
       }
@@ -37,7 +45,7 @@ Future<bool> generate() async{
       await http.get(Uri.parse('https://health-system-qrcode.herokuapp.com/emergency-info-qrcode/' + globals.user), headers:{"x-access-token" : globals.token});
       if(response.statusCode == 200){
         final body = json.decode(response.body);
-        globals.QRb64= body['qrcode'];       
+        globals.QREmergencyb64= body['qrcode'];       
         return true;
       }else{
         return false;
@@ -46,7 +54,7 @@ Future<bool> generate() async{
 
 Future<bool> loadQR(String hsh) async{
   var response = 
-      await http.get(Uri.parse('https://health-system-qrcode.herokuapp.com/emergency-info-qrcode-read/' + hsh), headers:{"x-access-token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbmNvZGUiOnsidXNlciI6ImhvamUiLCJwd2hhc2giOiJlZjc5N2M4MTE4ZjAyZGZiNjQ5NjA3ZGQ1ZDNmOGM3NjIzMDQ4YzljMDYzZDUzMmNjOTVjNWVkN2E4OThhNjRmIiwidXNlclR5cGUiOiJkb2N0b3IifSwiZXhwIjoxNjUwOTgwNTU1LCJuYmYiOjE2NTA4OTQxNTV9.Y7RHHj6wyQSB8TghUn7aULNTmPDb1aameDTNQbUjKpKCytNpTmuDaT-PA6BgQadUd_ldmYNRl6_0aevs6msAZGq088nBzlFkM2BLvLXxlePTPpBNtTHhDUVb16SyyRWdhqgVDdWp_V7mByDW2mVXkyNqmGZB2rvxIV5TENFaY-Tm8q8IsCqCebHYWO0HTvTvylIoGk-n5NXzuzl_Po9P9xtKm5kto92_g9h4WTYRcxTBG2ZYIrIs4bWXHAO5pNPK3HnAKJiTEDPrQ4IATlbOh956yAWtmQxPaAjst9hABUeuFCjmdclJKSz3FjcPG8yaqOMjXXDIsdQXa4M6VQJr2Q"});
+      await http.get(Uri.parse('https://health-system-qrcode.herokuapp.com/emergency-info-qrcode-read/' + hsh), headers:{"x-access-token" : globals.token});
       if(response.statusCode == 200){
         final body = json.decode(response.body);
         var emergencyInfo = body['emergencyInfo'];

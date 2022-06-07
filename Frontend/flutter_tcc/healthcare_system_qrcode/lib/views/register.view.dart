@@ -10,6 +10,7 @@ class RegisterRoute extends StatefulWidget {
 }
 
 class _RegisterRoute extends State<RegisterRoute> {
+  TextEditingController cpfController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
@@ -29,7 +30,10 @@ class _RegisterRoute extends State<RegisterRoute> {
               TextButton(
                   child: const Text("OK"),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const MyHomePage(title: '',)),
+    );
                   })
             ]);
       },
@@ -58,7 +62,7 @@ class _RegisterRoute extends State<RegisterRoute> {
   }
 
   runMyRegister() {
-    register(nameController.text, passwordController.text,dropdownValue).then((value) {
+    register(cpfController.text,nameController.text, passwordController.text,dropdownValue).then((value) {
       if (value == true) {
         registerAccepted();
       } else {
@@ -70,7 +74,7 @@ class _RegisterRoute extends State<RegisterRoute> {
   }
 
   _onClickRegister(BuildContext context) {
-    if (nameController.text.isEmpty || passwordController.text.isEmpty || passwordConfirmController.text.isEmpty) {
+    if (cpfController.text.isEmpty || nameController.text.isEmpty || passwordController.text.isEmpty || passwordConfirmController.text.isEmpty) {
       showDialog(
         context: context,
         builder: (context) {
@@ -114,6 +118,7 @@ class _RegisterRoute extends State<RegisterRoute> {
         title: const Text('Cadastro'),
       ),
       body: Center(
+        child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -131,13 +136,35 @@ class _RegisterRoute extends State<RegisterRoute> {
               padding: const EdgeInsets.all(10),
               child: TextField(
                 autofocus: false,
+                controller: cpfController,
+                decoration: const InputDecoration(
+                  fillColor: Color.fromARGB(255, 159, 218, 231),
+                  filled: true,
+                  border: OutlineInputBorder(),
+                  labelText: 'CPF',
+                  hintText: 'Entre com o seu CPF',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 0, color: Color.fromARGB(255, 255, 255, 255)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2, color: Color.fromARGB(255, 0, 184, 153)),
+                  ),
+                ),
+              ),
+            ),
+             Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                autofocus: false,
                 controller: nameController,
                 decoration: const InputDecoration(
                   fillColor: Color.fromARGB(255, 159, 218, 231),
                   filled: true,
                   border: OutlineInputBorder(),
-                  labelText: 'Usuário',
-                  hintText: 'Entre com o seu usuário',
+                  labelText: 'Nome',
+                  hintText: 'Entre com o seu nome completo',
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                         width: 0, color: Color.fromARGB(255, 255, 255, 255)),
@@ -267,6 +294,7 @@ class _RegisterRoute extends State<RegisterRoute> {
                   },
                 )),
           ],
+        ),
         ),
       ),
     );

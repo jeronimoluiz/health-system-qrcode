@@ -1,16 +1,7 @@
-import 'dart:developer';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:healthcare_system_qrcode/controller/emercgencyIngoRegisterController.dart';
 import 'package:healthcare_system_qrcode/controller/login.controller.dart';
-import 'package:healthcare_system_qrcode/controller/register.controller.dart';
 import 'package:healthcare_system_qrcode/views/register.view.dart';
-import 'views/qrCodeReading.view.dart';
 import 'views/home.view.dart';
-import 'qrcode.dart' as scanner; 
-import 'package:healthcare_system_qrcode/globals.dart' as globals;
-import 'package:healthcare_system_qrcode/views/emergencyInfo.view.dart';
-import 'package:healthcare_system_qrcode/views/medicineRegister.view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -71,22 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     _passwordVisible = false;
   }
-
-  _onClickQrCode(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => QrCodeRoute()),
-    );
-  }
   
-  loginAccepted() {
+  loginAccepted(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const HomeRoute()),
     );
   }
 
-  loginDenied() {
+  loginDenied(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -104,59 +88,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  runMyLogin() {
+  runMyLogin(BuildContext context) {
     login(nameController.text, passwordController.text).then((value) {
-      if (value == true) {
-        loginAccepted();
+     if (value == true) {
+        loginAccepted(context);
       } else {
-        loginDenied();
+        loginDenied(context);
       }
     }, onError: (error) {
       return (error);
-    });
+   });
   }
-
-   _onClickLoadQR(String hsh) {
-    loadQR(hsh).then((value) {
-      if (value == true) {
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const EmergencyInfoRoute()),
-        );
-      } else {
-       showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: const Text("Erro"),
-              content: const Text("Houve algum erro, contacte o suporte!"),
-              actions: <Widget>[
-                TextButton(
-                    child: const Text("OK"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
-              ]);
-        },
-      );
-      }
-    }, onError: (error) {
-      return (error);
-    });    
-  }
-
-  runMyScanner(BuildContext context) {
-    scanner.readQRCode().then((value) {
-      if (value == '-1') {
-        log('error');
-      } else {
-        _onClickLoadQR(value);
-      }
-    }, onError: (error) {
-      return (error);
-    });
-  }
-
 
   _onClickLogin(BuildContext context) {
     if (nameController.text.isEmpty || passwordController.text.isEmpty) {
@@ -176,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       );
     } else {
-      runMyLogin();
+      runMyLogin(context);
     }
   }
 
@@ -343,27 +285,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text('Cadastre-se'),
                 ),
               ),
-              SizedBox(height: 60),
-              Container(
-                  height: 50,
-                  width: 500,
-                  padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    )),
-                    backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 209, 0, 0)),
-                    ),
-                    child: const Text('Dados Emergenciais'),
-                    onPressed: () {
-                      runMyScanner(context);
-                      //_onClickQrCode(context);
-
-                    },
-                  )),
             ],
           ),
         ),
